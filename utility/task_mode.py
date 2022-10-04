@@ -31,11 +31,14 @@ import threading
 task queue class:
 a queue struct containing task with priority.
 """
+
+
 class Task:
-    def __init__(self, priority : int, callback, para):
+    def __init__(self, priority: int, callback, para):
         self.priority = priority
         self.callback = callback
         self.para = para
+
 
 class TaskQueue(threading.Thread):
     def __init__(self, name):
@@ -45,7 +48,7 @@ class TaskQueue(threading.Thread):
         self._lock = Lock()
         self.start()
 
-    def PushTask(self, task : Task):
+    def PushTask(self, task: Task):
         self._lock.acquire()
         self._taskQueue.put(task)
         self._lock.release()
@@ -69,13 +72,15 @@ class TaskQueue(threading.Thread):
         self._lock.release()
         self.join()
 
+
 """
 task loop class:
 loop execution supporting pause and resume
 """
 
+
 class TaskLoop(threading.Thread):
-    def __init__(self, initTask : Task, runTask : Task, stopTask : Task, pauseOnStart=False):
+    def __init__(self, initTask: Task, runTask: Task, stopTask: Task, pauseOnStart=False):
         super().__init__()
         self._taskOk = True
         self._taskPaused = pauseOnStart
@@ -85,6 +90,7 @@ class TaskLoop(threading.Thread):
         self._stopTask = stopTask
         self._taskPara = runTask.para
         self._initTask.callback(self._initTask.para)
+        self.start()
 
     def run(self):
         while self._taskOk:
@@ -108,8 +114,8 @@ class TaskLoop(threading.Thread):
         self._lock.release()
 
     def EndLoop(self):
-        self._stopTask.callback(self._stopTask.para)
         self._lock.acquire()
         self._taskOk = False
         self._lock.release()
         self.join()
+        self._stopTask.callback(self._stopTask.para)
