@@ -1,0 +1,7 @@
+# .vscode file
+.vscode
+.vscode/*
+
+# all pycachfiles
+__pycache__
+__pycache__/*
